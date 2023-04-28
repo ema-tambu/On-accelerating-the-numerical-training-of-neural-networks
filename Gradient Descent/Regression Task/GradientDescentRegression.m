@@ -1,68 +1,86 @@
-function [W, b, costHistory] = GradientDescentRegression(x, y, max_iterations, network_shape)
+function [costHistory, W, b] = GradientDescentRegression(...
+    x, y, MaxIter, shape, sigma, sigmaprime, eta)
 
     % Validate network shape
-    if network_shape(1) ~= 1 || network_shape(end) ~= 1
-        error('Network shape must begin and end with 1');
+    if shape(end) ~= 1
+        error('Network shape provided is not for regression');
     end
     
     % Number of layers
-    num_layers = length(network_shape);
+    L = length(shape);
     
     % Initialize weights and biases
-    W = cell(1, num_layers - 1);
-    b = cell(1, num_layers - 1);
+    W = cell(1, L-1);
+    b = cell(1, L-1);
     
-    for i = 1:num_layers - 1
-        W{i} = randn(network_shape(i+1), network_shape(i));
-        b{i} = randn(network_shape(i+1), 1);
+    z = cell(1,L-1);
+    D = cell(1,L-1);
+    delta = cell(1, L-1);
+    a = cell(1,L);
+
+    for l = 1:L-1
+        W{l} = randn(shape(l+1), shape(l));
+        b{l} = randn(shape(l+1), 1);
     end
-    
-    % Learning rate and cost history
-    learning_rate = 0.01;
-    costHistory = zeros(1, max_iterations);
+    costHistory = zeros(1, MaxIter);
     
     % Training loop
-    for iter = 1:max_iterations
+    temp = 0.1;    % just a handle variable to print the progress
+    for i = 1:MaxIter
         % Forward pass
-        A = cell(1, num_layers);
-        Z = cell(1, num_layers - 1);
-        A{1} = x;
-        for i = 1:num_layers - 1
-            Z{i} = W{i} * A{i} + b{i};
-            A{i+1} = activation_function(Z{i});
+%         A = cell(1, L);
+%         Z = cell(1, L - 1);
+        a{1} = x;
+        for l = 1:L - 1
+            z{l} = W{l}*a{l}+b{l};
+            a{l+1} = sigma(z{l});
+%             D{l} = diag(sigmaprime(z{l}));
         end
     
         % Compute cost
-        cost = 0.5 * mean((A{end} - y).^2);
-        costHistory(iter) = cost;
+        cost = 0.5 * mean((a{end} - y).^2);
+        costHistory(i) = cost;
     
         % Backward pass
-        dZ = cell(1, num_layers - 1);
-        dW = cell(1, num_layers - 1);
-        db = cell(1, num_layers - 1);
-        dZ{end} = (A{end} - y) .* activation_derivative(Z{end});
-    
-        for i = num_layers - 1:-1:1
-            dW{i} = (dZ{i} * A{i}') / size(x, 2);
-            db{i} = mean(dZ{i}, 2);
-            if i > 1
-                dZ{i-1} = (W{i}' * dZ{i}) .* activation_derivative(Z{i-1});
-            end
+%         dZ = cell(1, L - 1);
+%         dW = cell(1, L - 1);
+%         db = cell(1, L - 1);
+%         dZ{end} = (A{end} - y) .* activation_derivative(Z{end});
+        delta{L-1} = (a{L}-y).*sigmaprime(z{L-1});
+        for l = L-1:-1:2
+            delta{l-1} = sigmaprime(z{l-1}).*((W{l})'*delta{l});
         end
+%         for l = L - 1:-1:1
+%             dW{l} = (dZ{l} * A{l}') / size(x, 2);
+%             db{l} = mean(dZ{l}, 2);
+%             if l > 1
+%                 dZ{l-1} = (W{l}' * dZ{l}) .* activation_derivative(Z{l-1});
+%             end
+%         end
     
         % Update weights and biases
-        for i = 1:num_layers - 1
-            W{i} = W{i} - learning_rate * dW{i};
-            b{i} = b{i} - learning_rate * db{i};
+        for l = 1:L - 1
+%             W{l} = W{l} - eta * dW{l};
+%             b{l} = b{l} - eta * db{l};
+            % here I no longer have the stochastic version
+            W{l} = W{l} - eta*((delta{l}*a{l}')/size(x,2));
+            b{l} = b{l} - eta*mean(delta{l}, 2);
+            
+        end
+        
+        % Print progress on the screen (10%, 20%, ...)
+        if i == floor(MaxIter*temp)
+            fprintf('%.1f%%\n', temp*100);
+            temp = temp + 0.1;
         end
     end
 
 end % end function
 
-function y = activation_function(x)
-y = tanh(x);
-end
-
-function y = activation_derivative(x)
-y = 1 - tanh(x).^2;
-end
+% function y = activation_function(x)
+% y = tanh(x);
+% end
+% 
+% function y = activation_derivative(x)
+% y = 1 - tanh(x).^2;
+% end
