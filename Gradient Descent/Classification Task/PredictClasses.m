@@ -1,4 +1,4 @@
-function [Predy] = Predict(W, b, sigma, Datax)
+function [Predy] = PredictClasses(W, b, sigma, Datax)
     %Predict Performs prediction on a new test set
     %   Classifies the new data in Datax using theù
     %   NN described by {W,b, sigma}

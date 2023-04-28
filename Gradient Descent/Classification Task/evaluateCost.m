@@ -25,5 +25,5 @@ function [cost] = evaluateCost(W, b, Datax, Datay, sigma)
 
         cost = cost + norm(Datay(:,i)-a_tmp{end})^2;
     end
-    % cost = 1/d*cost;  % ok non cambia niente
+    cost = 1/d*cost;
 end

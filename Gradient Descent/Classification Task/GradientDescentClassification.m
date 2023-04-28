@@ -1,4 +1,4 @@
-function [costHistory, W, b] = GradientDescent( ...
+function [costHistory, W, b] = GradientDescentClassification( ...
         trainData, y_cat, MaxIter, sigma, sigmaprime, eta, shape)
     %GradientDescentClassification Performs gradient descent on a given
     %Feed Forward Neural Network
@@ -58,7 +58,7 @@ function [costHistory, W, b] = GradientDescent( ...
         n1 = shape(i);
         n2 = shape(i+1);
         W{i} = 0.5*randn(n2, n1);
-        b{i} = zeros(1, n2)';
+        b{i} = 0.5*randn(1, n2)';
     end
    
     Nx = size(trainData, 2);
@@ -94,7 +94,7 @@ function [costHistory, W, b] = GradientDescent( ...
         end
 
         % Keep track of the progress
-        costHistory(i) = evaluateCost2(W, b, trainData, y_cat, sigma); % std::move()??
+        costHistory(i) = evaluateCost(W, b, trainData, y_cat, sigma); % std::move()??
         
         % Print progress on the screen (10%, 20%, ...)
         if i == floor(MaxIter*temp)
