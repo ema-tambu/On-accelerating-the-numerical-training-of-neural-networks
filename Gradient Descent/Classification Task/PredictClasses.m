@@ -4,7 +4,7 @@ function [Predy] = PredictClasses(W, b, sigma, Datax)
     %   NN described by {W,b, sigma}
     
     % length of the network
-    L = numel(W);
+    L = length(W);
     % length of the test dataset
     N = size(Datax, 2); % R^n
     % pre-allocate output
