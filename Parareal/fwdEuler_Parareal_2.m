@@ -1,4 +1,4 @@
-function [u_refined, t_refined] = Parareal_fun2(t0, tN, y0, f, dt, dT, maxIter)
+function [u_refined, t_refined] = fwdEuler_Parareal_2(t0, tN, y0, f, dt, dT, maxIter)
 
 % this function implements the parareal algorithm for a 1D ODE using forward euler. 
  

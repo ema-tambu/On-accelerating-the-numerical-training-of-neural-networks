@@ -8,14 +8,19 @@ t0 = 0; tN = 14;
 y0 = 0;
 dt = 0.02;
 dT = 1;
-k_max = 8;
+k_max = 4;
 
-[u,t] = fwd_Euler_parareal(t0, tN, y0, f, dt, dT, k_max);
+tic
+% [u,t] = fwd_Euler_parareal(t0, tN, y0, f, dt, dT, k_max);
+[u,t] = fwdEuler_Parareal_2(t0, tN, y0, f, dt, dT, k_max);
+time_parareal = toc
 
+tic
 [t_fwd, u_fwd] = fwd_Euler(t0,tN,y0,dt,f);
+time_fwdEuler = toc
 
 % Plot of the last iteration of Parareal
-close all
+% close all
 figure
 plot(t_fwd,u_fwd,'-','Linewidth',2, 'Color', 'r') % fine
 hold on
