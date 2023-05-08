@@ -4,9 +4,9 @@ clc
 
 f = @(t,y) sin(t).*y + t;
 %f = @(t,y) cos(t).*y - t;
-t0 = 0; tN = 14;
+t0 = 0; tN = 40;
 y0 = 0;
-dt = 0.02;
+dt = 0.0002;
 dT = 1;
 k_max = 4;
 

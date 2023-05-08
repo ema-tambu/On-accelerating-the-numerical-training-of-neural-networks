@@ -25,11 +25,12 @@ Uk = zeros(N_coarse, 1);
 U = zeros(N_coarse, 1);
 U(1) = y0;
 
-for j = 1:N_coarse-1 
-    U(j+1) = U(j) + dT*f(t_coarse(j),U(j)); 
-end 
-
 for i = 1:maxIter
+     % correction
+    for j = 1:N_coarse-1 
+        U(j+1) = U(j) + dT*f(t_coarse(j), U(j)) + u_refined(j,end) - Uk(j+1);
+    end
+
     % parallel step
     parfor j = 1:N_coarse-1
         temp_u_refined = zeros(1, N_refined);
@@ -40,12 +41,9 @@ for i = 1:maxIter
         u_refined(j, :) = temp_u_refined;
     end
     
-    % prediction & correction 
+    % prediction
     for j = 1:N_coarse-1 
         Uk(j+1) = U(j) + dT*f(t_coarse(j),U(j));
-    end 
-    for j = 1:N_coarse-1 
-        U(j+1) = U(j) + dT*f(t_coarse(j), U(j)) + u_refined(j,end) - Uk(j+1);
     end 
     
     figure;
