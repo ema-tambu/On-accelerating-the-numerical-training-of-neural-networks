@@ -15,7 +15,7 @@ k_max = 8;
 [t_fwd, u_fwd] = fwd_Euler(t0,tN,y0,dt,f);
 
 % Plot of the last iteration of Parareal
-%close all
+close all
 figure
 plot(t_fwd,u_fwd,'-','Linewidth',2, 'Color', 'r') % fine
 hold on
