@@ -20,6 +20,8 @@ function [costHistory, W, b] = GradientDescent( ...
     z = cell(1,L-1);
     delta = cell(1, L-1);
     a = cell(1,L);
+
+    % initialize weight and biases randomly
     for i = 1:(L-1)
         W{i} = 0.5*randn(shape(i+1), shape(i));
         b{i} = 0.5*randn(shape(i+1), 1);
