@@ -1,4 +1,4 @@
-function dL = gradL(W, b)
+function [cost,dL] = gradL(W, b)
 % This function takes as input the Weight and the Biases at the
 % previous step and computes a forward-backward pass through the
 % network, returning as output the gradient of the Loss Function with
@@ -28,4 +28,8 @@ end
 
 dL = delta{l}*(a{l})';
 dL = [dL; delta{l}];
+
+ % compute cost
+cost = 0.5 * mean((a{end} - y).^2, 'all');
+
 end
