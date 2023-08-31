@@ -42,14 +42,16 @@ for k = 1 : k_max
 
     % Update of the coarse solution
     for h = 1 : L_coarse - 1
-        du = sin(t_coarse(h))*U(h) + t_coarse(h);
-        U_k(h+1) = U(h) + dT*du;
+        % du = sin(t_coarse(h))*U(h) + t_coarse(h);
+        % U_k(h+1) = U(h) + dT*du;
+        U_k(h+1) = U(h) + dT*(sin(t_coarse(h))*U(h) + t_coarse(h));
     end
 
     % Correction step
     for n = 1 : L_coarse - 1
-        du = sin(t_coarse(n))*U(n) + t_coarse(n);
-        U(n+1) = U(n) + dT*du;
+        % du = sin(t_coarse(n))*U(n) + t_coarse(n);
+        % U(n+1) = U(n) + dT*du;
+        U(n+1) = U(n) + dT*(sin(t_coarse(n))*U(n) + t_coarse(n));
 
         U(n+1) = U(n+1) + u_fine(n, end) - U_k(n+1);
     end

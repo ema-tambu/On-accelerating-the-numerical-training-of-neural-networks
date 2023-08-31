@@ -1,15 +1,16 @@
 clear all; close all; clc
 
-f = @(t,y) sin(t).*cos(y) + exp(-t);
+% f = @(t,y) sin(t).*cos(y) + exp(-t);
 % f = @(t,y) cos(t).*y - t;
 % f = @(t, y) -2*y + 0.*t; % for this equation Coarse FE is unstable
+f = @(t,y) sin(t).*y + t;
 
-t0 = 0; tN = 30;
+t0 = 0; tN = 15;
 y0 = 1;
 dt = 0.02;
 N_processors = 4;
 dT = floor((tN-t0)/N_processors);
-k_max = N_processors;   % at every iteration, I have one subinterval EXACT
+k_max = 2*N_processors + 1;   % at every iteration, I have one subinterval EXACT
 
 tic
 [u,t] = fwd_Euler_parareal(t0, tN, y0, f, dt, dT, k_max);

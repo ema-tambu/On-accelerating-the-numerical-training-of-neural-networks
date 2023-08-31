@@ -17,21 +17,31 @@ function [costHistory, W, b] = TrainNetworkParareal( ...
     W = cell(1, L-1);
     b = cell(1, L-1);
 
-    for i = 1:(L-1)
-        W{i} = 0.5*randn(shape(i+1), shape(i));
-        b{i} = 0.5*randn(shape(i+1), 1);
+    for l = 1:(L-1)
+        W{l} = 0.5*randn(shape(l+1), shape(l));
+        b{l} = 0.5*randn(shape(l+1), 1);
     end
 
     costHistory = zeros(1, MaxIter);
 
-    % training loop - BEGIN PARAREAL LOOP HERE
-        f = @(cost,x) gradL(W{j-1},b{j-1}); % this is the function that
-        % will be used as the right hand side of the ODE for the parareal.
-        % Instead of calling this function multiple times through a 
-        % function handle, we could save the output once and for all at
-        % every iteration.
+    % BEGIN PARAREAL HERE
+    
+    % prepare initial conditions (unfold matices and biases)
+    for l = 1:(L-1)
+        for j = 1:size(W{l},1)
+            y0 = [y0; W(j,:)'];
+        end
+        y0 = [y0; b{l}];
+    end
+    
+    T = 1; %the absolute time is not important, what's important is how fast you grow in such time
+    N = 4; 
 
-        % remember to save the value of the Loss Function at every step
-        costHistory(i) = cost;
+    % TODO: c'è da passare in qualche modo sigma e sigmaprime a gradL !!
+
+    [parareal_solution, iterations] = parareal_systems(T, N, y0, MaxIter);
+
+    % remember to save the value of the Loss Function at every step
+    costHistory(i) = cost;
 
 end

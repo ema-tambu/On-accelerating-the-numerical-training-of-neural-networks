@@ -4,7 +4,8 @@
 clear all; close all; clc;
 
 % Load data to train the network
-addpath 'Gradient Descent'\'Classification Task'\
+% addpath 'Gradient Descent'\'Classification Task'\
+addpath 'parareal_systems'
 load X.mat; load y.mat; y = Y;
 
 n = size(X, 1);
