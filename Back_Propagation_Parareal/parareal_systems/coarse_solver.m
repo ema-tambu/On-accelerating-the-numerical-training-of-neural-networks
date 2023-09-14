@@ -1,4 +1,4 @@
-function result = coarse_solver(t0, y0, deltaT)
+function result = coarse_solver(t0, y0, deltaT, sigma, sigmaprime, shape)
 
 % 1 - Use a cheaper ODE23 for operator G() OR
 
@@ -8,6 +8,12 @@ function result = coarse_solver(t0, y0, deltaT)
 
 % 2 - OR a single step Fowrward Euler
 
-result = y0' + deltaT * ode_function(t0, y0);
+% result = y0' + deltaT * ode_function(t0, y0);
+
+% transition from ode_function(.,.) ---> gradL(.,.) !!!
+% the ode_function gradL doesn't take in input the current time, t0 is
+% indeed useless to have here
+[~, result] = gradL(y0, sigma, sigmaprime, shape);
+result = y0' + deltaT * result;
 
 end
