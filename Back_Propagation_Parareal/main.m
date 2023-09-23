@@ -1,72 +1,62 @@
 % Using the parareal algorithm to train a Fully Connected Neural Network
 
-% classification task
+% Easy classification task
 clear all; close all; clc;
+addpath("parareal_systems\")
 
-% Load data to train the network
-% addpath 'Gradient Descent'\'Classification Task'\
-addpath 'parareal_systems'
-load X.mat; load y.mat; y = Y;
+x1 = [0.1,0.3,0.1,0.6,0.4];
+y1 = [0.1,0.4,0.5,0.9,0.2];
 
-n = size(X, 1);
-d = size(X, 2);
-n_classes = 4;
+x2 = [0.6,0.5,0.9,0.4,0.7];
+y2 = [0.3,0.6,0.2,0.4,0.6];
 
-% visualize dataset
 
-figure
-scatter(X(:, 1), X(:, 2), [], y);
+x = [x1, x2; y1, y2];
+y = [ones(1,5) zeros(1,5); zeros(1,5) ones(1,5)];
 
-% transform y to categorical
-y_cat = zeros(4, n);
-for k = 1:n
-    y_cat(y(k)+1,k) = 1;
-end
-
-% split the dataset into train and test
-
-split_ratio = 0.3;
-k = floor(split_ratio*n);
-
-X_train = X(1:k,:);
-X_test = X(k+1:end,:);
-y_train = y(1:k);
-y_test = y(k+1:end);
-y_train_cat = y_cat(:,1:k);
-y_test_cat = y_cat(:,k+1:end);
-
-% Define some hyperparameters of the network
 sigma = @(t) 1./(1+exp(-t));
 sigmaprime = @(t) sigma(t).*(1-sigma(t));
-
-shape = [d, 3, 3, n_classes];
-
-niter = 3e5;
+shape = [2, 3, 3, 2];
+niter = 7e4;
 eta = 0.05;
 
-% TRAIN THE NETWORK
+disp('begin')
+tic
+[W_, b_] = TrainNetworkParareal( ...
+        x, y, niter, eta, sigma, sigmaprime, shape);
+toc
+disp('end')
 
-[costHistory, W, b] = TrainNetworkParareal( ...
-        X_train', y_train_cat, niter, sigma, sigmaprime, eta, shape);
-save NNparams.mat W b costHistory
-% load NNparams.mat
+load reference.mat
 
-% DISPLAY RESULTS AND TEST THE NETWORK
+normsw = [];
+normsb = [];
+for l = 1:numel(shape)-1
+    normsw = [normsw, norm(W{l}-W_{l},2)];
+    normsb = [normsb, norm(b{l}-b_{l},2)];
+end
 
-% Plot costHistory as done before
+%%
+% generate new random data in the square [0,1]^2
+n = 300;
+testDatax = rand(n, 2);
+testDatay = PredictClasses(W, b, sigma, testDatax');
+
+x = x';
+y = int32([zeros(5, 1); ones(5, 1)]');
 figure
-plot(linspace(0,niter,niter)', costHistory, '-')
-fprintf('Cost Function: %f\n', costHistory(end));
-
-% Test - Predict the class of the points in the test set using the network
-y_pred = PredictClasses(W, b, sigma, X_test');
-Plot the prediction
-figure
-scatter(X_train(:, 1), X_train(:, 2), [], y_train, 'o');
+scatter(x(:,1), x(:,2), [], y, 'o');
 hold on;
-scatter(X_test(:, 1), X_test(:, 2), [], y_pred, '*');
+scatter(testDatax(:,1), testDatax(:,2), [], testDatay, 'filled');
 
-% confusion matrix
+% generate new random data in the square [0,1]^2
+n = 300;
+testDatax = rand(n, 2);
+testDatay = PredictClasses(W_, b_, sigma, testDatax');
+
+y = int32([zeros(5, 1); ones(5, 1)]');
 figure
-y_test = int32(y_test);
-confusionchart(y_test,y_pred)
+scatter(x(:,1), x(:,2), [], y, 'o');
+hold on;
+scatter(testDatax(:,1), testDatax(:,2), [], testDatay, 'filled');
+

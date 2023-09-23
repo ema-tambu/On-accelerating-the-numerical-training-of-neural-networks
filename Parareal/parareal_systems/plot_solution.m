@@ -1,9 +1,9 @@
 function plot_solution(time_points, parareal_solution, time_reference, reference_solution)
 dim = size(parareal_solution, 2);
 for i=1:dim
-    plot(time_points, parareal_solution(:,i), 'o-', 'MarkerSize', 10, 'DisplayName', 'Parareal Solution');
+    plot(time_points, parareal_solution(:,i), 'o-', 'MarkerSize', 10, 'DisplayName', ['Parareal Solution', num2str(i)]);
     hold on;
-    plot(time_reference, reference_solution(:,i), '.--', 'DisplayName', 'Reference Solution');
+    plot(time_reference, reference_solution(:,i), '.--', 'DisplayName', ['Reference Solution', num2str(i)]);
 end
 hold off;
 xlabel('Time');

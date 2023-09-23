@@ -21,11 +21,13 @@ U = U_tilde;
 % Parareal iterations
 k = 1;
 while k < max_iterations
-
+    
+    disp(['Parareal iteration: ', num2str(k)])
     % Parallel fine solver step
     parfor j =1:N
         U_hat(j,:) = fine_solver((j-1)*deltaT, U_tilde(j,:), deltaT);
     end
+    disp(['End parfor: ', num2str(k)])
 
     % Update coarse solution
     for j=1:N
@@ -39,12 +41,16 @@ while k < max_iterations
     end
     
     % Check for convergence
-    % if np.linalg.norm(U[1:] - U_tilde[1:]) < tolerance:
+    % if norm(U[1:] - U_tilde[1:]) < tolerance:
     %    break
 
     U_tilde = U;
 
     k = k + 1;
+
+    if any(isnan(U), 'all')
+        error('NaN in the parareal solution')
+    end
 
 end
 end
