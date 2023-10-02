@@ -11,9 +11,8 @@ function result = coarse_solver(t0, y0, deltaT, x, y, sigma, sigmaprime, shape)
 % result = y0' + deltaT * ode_function(t0, y0);
 
 % transition from ode_function(.,.) ---> gradL(.,.) !!!
-% the ode_function gradL doesn't take in input the current time, t0 is
-% indeed useless to have here
-[~, result] = gradL(y0, x, y, sigma, sigmaprime, shape);
-result = y0 + deltaT * result;
+% the ode_function gradL doesn't take in input the current time
+temp = gradL(y0, x, y, sigma, sigmaprime, shape)';
+result = y0 + deltaT * temp;
 
 end

@@ -11,6 +11,11 @@ function [dL] = gradL(y0, x, y, sigma, sigmaprime, shape)
 % to unfold the vector of weights and biases we need to know the shape of
 % the netwrok
 
+% 
+if (size(y0, 1) < 2)
+    y0 = y0';
+end
+
 % Inizialize memory
 L = numel(shape);
 W = cell(1, L-1);
@@ -34,7 +39,7 @@ for l = 1:(L-1)
     end
     % assign bias vector
     gap = shape(l+1)-1;
-    b{l} = y0(pointer_y0:pointer_y0 + gap)';    % column vector
+    b{l} = y0(pointer_y0:pointer_y0 + gap);    % column vector
     pointer_y0 = pointer_y0 + gap + 1;
 end
 
@@ -47,7 +52,7 @@ a = cell(1,L);
 % forward pass
 a{1} = x;
 for l = 1:(L-1)
-    z{l} = W{l}*a{l}+b{l}';
+    z{l} = W{l}*a{l}+b{l};
     a{l+1} = sigma(z{l});
 end
 

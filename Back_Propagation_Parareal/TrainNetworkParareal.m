@@ -1,7 +1,8 @@
+% TODO: give as output the cost history too!
 function [W, b] = TrainNetworkParareal( ...
         x, y, MaxIter, eta, sigma, sigmaprime, shape)
-    % TrainNetworkParareal trains a given Feed Forward Neural Network using
-    % the Parareal algorithm (parallel in time)
+    %GradientDescent Performs gradient descent on a given
+    %Feed Forward Neural Network
     %   x:              x-data of the training set
     %   y:              y-data of the training set
     %   MaxIter:        maximum number of iteration allowed
@@ -13,8 +14,7 @@ function [W, b] = TrainNetworkParareal( ...
 
     L = length(shape);  % numer of layers
 
-    % TODO: Here we could speedup things inizializing only the vector y0 
-    % randomly
+    % Here we can speedup things and inizialize only the vector y0 randomly
 
     % Initialize weights and biases randomly
     W = cell(1, L-1);
@@ -28,19 +28,15 @@ function [W, b] = TrainNetworkParareal( ...
     % TODO: add cost history to the output
     % costHistory = zeros(1, MaxIter);
 
-    % PARAREAL
-    
-    % unfold matrices and biases into a vector that will be used by
-    % Parareal [ {W,b} -> y0 ]
-    
-    % initialize y0
+    % BEGIN PARAREAL HERE
+    % initialize y0 by counting the total number of parameters in the
+    % network
     tot_parameters = 0;
     for l = 1:L-1
         tot_parameters = tot_parameters + (shape(l+1)*shape(l)) + shape(l+1);
     end
     y0 = zeros(1,tot_parameters);
-
-    % set initial conditions
+    % prepare initial conditions (unroll matrices and biases into a vector)
     pointer_y0 = 1;
     for l = 1:(L-1)
         gap = shape(l) - 1;
@@ -53,24 +49,58 @@ function [W, b] = TrainNetworkParareal( ...
         pointer_y0 = pointer_y0 + gap + 1;
     end
     
-    % set final time T
+    % use max iter and eta to understeand what T is
     T = eta * MaxIter;
-
-    % set number of parareal subintervals
-    N = 4; 
-    % set max number of parareal iterations
-    parareal_max_iterations = N + 1;
+    disp(['T=' num2str(T)]);
     
-    % 1) Parareal - PROBLEM IN HERE
-    % [parareal_solution, iterations] = parareal_systems(T, N, y0, x, y, ...
-    %     parareal_max_iterations, sigma, sigmaprime, shape);
+    % eta = dt => N_fine = 
+    N_fine = 300;
+    % first choose dT and then N_coarse
+    N_coarse = 20;
+    
 
-    % 2) Non-parallel solver
-    options = odeset('RelTol', 1e-3, 'AbsTol', 1e-3);
-    [~, y45] = ode45(@(t, y_) gradL(y_, x, y, sigma, sigmaprime, shape), [0,T], y0, options);
-    parareal_solution = y45(end,:);
+    % options = odeset('RelTol', 1e-3, 'AbsTol', 1e-3);
+    % [t45, y45] = ode45(@(t, y_) gradL(y_, x, y, sigma, sigmaprime, shape), [0,T], y0, options);
+    % parareal_solution = y45(end,:);
+    % y45 = y45(end,:);
 
-    % finally rebuild the matrices [ y0 -> {W,b} ]
+    % plot
+    if (0)
+        dim = length(y0);
+        for i=1:dim
+            plot(t45, y45(:,i), '-', 'DisplayName', ['Reference Solution', num2str(i)]);
+            hold on;
+            % plot(t_ref, parareal_solution(:,i), '.--', 'DisplayName', ['Reference Solution', num2str(i)]);
+        end
+        hold off;
+        xlabel('Time');
+        ylabel('y(t)');
+        % legend();
+        grid on;
+    end
+
+    [parareal_solution, iterations] = parareal_systems(T, N_coarse, N_fine, y0, x, y, ...
+       sigma, sigmaprime, shape);
+    
+    % plot
+    if (0)
+        figure
+        dim = length(y0);
+        for i=1:dim
+            plot(linspace(0,T,N_coarse + 1), parareal_solution(:,i), '-', 'MarkerSize', 10, 'DisplayName', ['Parareal Solution', num2str(i)]);
+            hold on;
+            % plot(t_ref, parareal_solution(:,i), '.--', 'DisplayName', ['Reference Solution', num2str(i)]);
+        end
+        hold off;
+        xlabel('Time');
+        ylabel('y(t)');
+        % legend();
+        grid on;
+    end
+
+    % finally rebuild the matrices
+    % parareal_solution = y45(end,:);
+    parareal_solution = parareal_solution(end,:);
     pointer_y0 = 1;
     for l = 1:(L-1)
         % assign every row of the matrix
@@ -85,5 +115,7 @@ function [W, b] = TrainNetworkParareal( ...
         pointer_y0 = pointer_y0 + gap + 1;
     end
 
-    % costHistory(i) = cost; 
+    % remember to save the value of the Loss Function at every step
+    % costHistory(i) = cost; % aspe', in un secondo momento
+
 end

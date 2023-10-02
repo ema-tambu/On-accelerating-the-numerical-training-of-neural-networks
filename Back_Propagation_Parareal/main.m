@@ -17,7 +17,7 @@ y = [ones(1,5) zeros(1,5); zeros(1,5) ones(1,5)];
 sigma = @(t) 1./(1+exp(-t));
 sigmaprime = @(t) sigma(t).*(1-sigma(t));
 shape = [2, 3, 3, 2];
-niter = 7e4;
+niter = 1e4;
 eta = 0.05;
 
 disp('begin')
