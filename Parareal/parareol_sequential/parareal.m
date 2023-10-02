@@ -48,8 +48,8 @@ for k = 1:num_coarse_steps
     end
     
     % Parareal correction
-    % for i in range(k, num_coarse_steps, 1):
-    for i = 1:num_coarse_steps
+    % for i = 1:num_coarse_steps
+    for i = k:num_coarse_steps
         yC1(i + 1) = G(time_pts_coarse(i), yC(i), delta_t_coarse);
         temp2 = G(time_pts_coarse(i), yC2(i), delta_t_coarse);
         yC(i + 1) = yC1(i + 1) + yF(i,end) - temp2;  % remember that yF is shorter by 1, so i+1 -> i
@@ -61,25 +61,26 @@ for k = 1:num_coarse_steps
         time_pts_fine = linspace(t_initial, t_initial + delta_t_coarse, num_fine_steps + 1);
         
         figure;
-        title(['Iteration ', num2str(k + 1), ' of Parareal']);
+        title(['Iteration ', num2str(k), ' of Parareal']);
         hold on;
         
         % plot exact (reference)
         plot(t_ref, y_ref, '.', 'LineStyle', '--', 'DisplayName', 'Reference Solution');
         
         % plot coarse operator
-        plot(time_pts_coarse, yC2, 'o', 'DisplayName', 'yC2');
+        plot(time_pts_coarse, yC2, 'x', 'DisplayName', 'Par. Pred. (G)');
         
         % plot fine operator
-        for j = 1:num_coarse_steps
-            plot((j-1) * delta_t_coarse + time_pts_fine, yF(j, :), '-', 'Color', 'red');
-        end
+        % for j = 1:num_coarse_steps
+        %     plot((j-1) * delta_t_coarse + time_pts_fine, yF(j, :), '-', 'Color', 'red');
+        % end
+        plot(linspace(0,t_final,length(yF(:))), reshape(yF.', [], 1), '-', 'Color','red', 'DisplayName','Par. Pred. (F)')
         
         % plot parareal predicted
-        plot(time_pts_coarse, yC1, '*', 'DisplayName', 'G(yC(i-1))');
+        plot(time_pts_coarse, yC1, '*', 'DisplayName', 'Par. Corr. (G)');
         
         % plot parareal corrected
-        plot(time_pts_coarse, yC, 'x', 'DisplayName', ['parareal iteration ', num2str(k + 1)]);
+        plot(time_pts_coarse, yC, 'o', 'DisplayName', ['Parareal Solution #', num2str(k)]);
         
         xlabel('Time');
         ylabel('y(t)');
@@ -89,9 +90,9 @@ for k = 1:num_coarse_steps
 
     % check for convergence
     incr = norm(yC - yC2);
-    disp(['increment at iteration ' num2str(k + 1) ': ' num2str(incr)]);
+    disp(['increment at iteration ' num2str(k) ': ' num2str(incr)]);
     if (incr < 1e-3)
-        disp(['Parareal converged at iteration ' num2str(k + 1)])
+        disp(['Parareal converged at iteration ' num2str(k)])
         break
     end
 
