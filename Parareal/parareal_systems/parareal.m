@@ -41,6 +41,7 @@ for k = 1:N_coarse
     end
     yC2 = yC;
     
-    % disp(['iteration ', num2str(k) '/' num2str(N_coarse)]);
+    disp(['iteration ', num2str(k) '/' num2str(N_coarse)]);
+    disp(['incr = ', num2str(incr)]);
 end
 end

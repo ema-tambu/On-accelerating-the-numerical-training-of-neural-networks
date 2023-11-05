@@ -53,31 +53,30 @@ function [W, b] = TrainNetworkParareal( ...
     T = eta * MaxIter;
     disp(['T=' num2str(T)]);
     
-    % eta = dt => N_fine = 
-    N_fine = 300;
     % first choose dT and then N_coarse
-    N_coarse = 20;
+    N_coarse = 100;
+    % eta = dt => N_fine = 
+    N_fine = ceil(T/N_coarse) %number of fine steps in every subinterval               
     
-
     % options = odeset('RelTol', 1e-3, 'AbsTol', 1e-3);
     % [t45, y45] = ode45(@(t, y_) gradL(y_, x, y, sigma, sigmaprime, shape), [0,T], y0, options);
     % parareal_solution = y45(end,:);
     % y45 = y45(end,:);
 
-    % plot
-    if (0)
-        dim = length(y0);
-        for i=1:dim
-            plot(t45, y45(:,i), '-', 'DisplayName', ['Reference Solution', num2str(i)]);
-            hold on;
-            % plot(t_ref, parareal_solution(:,i), '.--', 'DisplayName', ['Reference Solution', num2str(i)]);
-        end
-        hold off;
-        xlabel('Time');
-        ylabel('y(t)');
-        % legend();
-        grid on;
-    end
+    % % plot
+    % if (0)
+    %     dim = length(y0);
+    %     for i=1:dim
+    %         plot(t45, y45(:,i), '-', 'DisplayName', ['Reference Solution', num2str(i)]);
+    %         hold on;
+    %         % plot(t_ref, parareal_solution(:,i), '.--', 'DisplayName', ['Reference Solution', num2str(i)]);
+    %     end
+    %     hold off;
+    %     xlabel('Time');
+    %     ylabel('y(t)');
+    %     % legend();
+    %     grid on;
+    % end
 
     [parareal_solution, iterations] = parareal_systems(T, N_coarse, N_fine, y0, x, y, ...
        sigma, sigmaprime, shape);
