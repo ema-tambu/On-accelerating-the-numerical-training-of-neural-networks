@@ -21,7 +21,7 @@ for i =1:N_coarse
 end
 
 % parareal loop
-for k = 1:N_coarse
+for k = 1:floor(N_coarse*0.8)
 
     % parallel for (fine solver)
     parfor i = 1:N_coarse

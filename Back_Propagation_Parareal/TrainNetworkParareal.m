@@ -54,9 +54,10 @@ function [W, b] = TrainNetworkParareal( ...
     disp(['T=' num2str(T)]);
     
     % first choose dT and then N_coarse
-    N_coarse = 100;
+    N_coarse = 500;
     % eta = dt => N_fine = 
-    N_fine = ceil(T/N_coarse) %number of fine steps in every subinterval               
+    % N_fine = ceil(T/N_coarse) %number of fine steps in every subinterval               
+    N_fine = 100
     
     % options = odeset('RelTol', 1e-3, 'AbsTol', 1e-3);
     % [t45, y45] = ode45(@(t, y_) gradL(y_, x, y, sigma, sigmaprime, shape), [0,T], y0, options);
