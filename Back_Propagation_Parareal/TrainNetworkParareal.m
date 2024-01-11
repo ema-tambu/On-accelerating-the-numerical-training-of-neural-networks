@@ -1,5 +1,5 @@
 % TODO: give as output the cost history too!
-function [W, b] = TrainNetworkParareal( ...
+function [W, b, costHistory] = TrainNetworkParareal( ...
         x, y, MaxIter, eta, sigma, sigmaprime, shape)
     %GradientDescent Performs gradient descent on a given
     %Feed Forward Neural Network
@@ -20,9 +20,19 @@ function [W, b] = TrainNetworkParareal( ...
     W = cell(1, L-1);
     b = cell(1, L-1);
 
-    for l = 1:(L-1)
-        W{l} = 0.5*randn(shape(l+1), shape(l));
-        b{l} = 0.5*randn(shape(l+1), 1);
+    % for l = 1:(L-1)
+    %     W{l} = 0.5*randn(shape(l+1), shape(l));
+    %     b{l} = 0.5*randn(shape(l+1), 1);
+    % end
+    load initialWeightsC.mat
+    % W{1} = W{1}';
+    % W{2} = W{2}';
+    % W{3} = W{3}';
+    for i=1:3
+        disp(W{i})
+    end
+    for i=1:3
+        disp(b{i})
     end
 
     % TODO: add cost history to the output
@@ -54,10 +64,10 @@ function [W, b] = TrainNetworkParareal( ...
     disp(['T=' num2str(T)]);
     
     % first choose dT and then N_coarse
-    N_coarse = 500;
+    N_coarse = 6; %1225; %1750; %2145; %3112
     % eta = dt => N_fine = 
-    % N_fine = ceil(T/N_coarse) %number of fine steps in every subinterval               
-    N_fine = 100
+    N_fine = ceil(T/(N_coarse*eta)) %number of fine steps in every subinterval               
+    % N_fine = 100
     
     % options = odeset('RelTol', 1e-3, 'AbsTol', 1e-3);
     % [t45, y45] = ode45(@(t, y_) gradL(y_, x, y, sigma, sigmaprime, shape), [0,T], y0, options);
@@ -79,7 +89,7 @@ function [W, b] = TrainNetworkParareal( ...
     %     grid on;
     % end
 
-    [parareal_solution, iterations] = parareal_systems(T, N_coarse, N_fine, y0, x, y, ...
+    [parareal_solution, iterations, costHistory] = parareal_systems(T, N_coarse, N_fine, y0, x, y, ...
        sigma, sigmaprime, shape);
     
     % plot
