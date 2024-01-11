@@ -1,5 +1,5 @@
 % TODO: implementa output [L, dL]
-function [dL] = gradL(y0, x, y, sigma, sigmaprime, shape)
+function [L, dL] = gradL(y0, x, y, sigma, sigmaprime, shape)
 
 % This function takes as input y0, (no specific time is needed!!) which is
 % a vector containing the Weights
@@ -93,7 +93,6 @@ dL = -y0;
 % TODO: compute cost
 % ok this is the value of the function L, not derived w.r.t anything, we
 % just want to assure that its value is decreasing
-% cost = 0.5 * mean((a{end} - y).^2, 'all');
-% L = cost;
+L = 0.5 * mean((a{end} - y).^2, 'all');
 
 end

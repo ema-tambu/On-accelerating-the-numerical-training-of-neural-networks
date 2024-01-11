@@ -1,4 +1,4 @@
-function result = fine_solver(t0, y0, dt, dT, x, y, sigma, sigmaprime, shape)
+function [L, result] = fine_solver(t0, y0, dt, dT, x, y, sigma, sigmaprime, shape)
 
 % 1 - Use ODE45 for operator F() OR
 
@@ -9,7 +9,8 @@ function result = fine_solver(t0, y0, dt, dT, x, y, sigma, sigmaprime, shape)
 % 2 - OR a fine stepped Fowrward Euler
 n = dT/dt;
 for j =1:n
-    y0 = y0 + dt * gradL(y0, x, y, sigma, sigmaprime, shape)';
+    [L, temp] = gradL(y0, x, y, sigma, sigmaprime, shape);
+    y0 = y0 + dt * temp';
     t0 = t0 + dt;
 end
 result = y0;
